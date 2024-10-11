@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:techverse51_yt_app/video_player_screen.dart';
 import 'video.dart'; // Import the Video model
+import 'video_player_screen.dart'; // Import the Video Player Screen
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -51,45 +51,116 @@ class _PlaylistDetailsScreenState extends State<PlaylistDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.playlistTitle),
-      ),
-      body: FutureBuilder<List<Video>>(
-        future: videos,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return const Center(child: Text('Error loading videos'));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('No videos available'));
-          } else {
-            return ListView.builder(
-              itemCount: snapshot.data!.length,
-              itemBuilder: (context, index) {
-                final video = snapshot.data![index];
-                return ListTile(
-                  leading: Image.network(
-                    video.thumbnailUrl,
-                    width: 100,
-                    height: 100,
-                    fit: BoxFit.cover,
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.blue, Colors.purple],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 40.0, bottom: 20.0),
+              child: Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.arrow_back, color: Colors.white),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
                   ),
-                  title: Text(video.title),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            VideoPlayerScreen(videoId: video.id),
+                  Expanded(
+                    child: Text(
+                      widget.playlistTitle,
+                      style: const TextStyle(
+                        fontSize: 28.0,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
                       ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: FutureBuilder<List<Video>>(
+                future: videos,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return const Center(child: Text('Error loading videos'));
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return const Center(child: Text('No videos available'));
+                  } else {
+                    return ListView.builder(
+                      itemCount: snapshot.data!.length,
+                      padding: const EdgeInsets.all(16.0),
+                      itemBuilder: (context, index) {
+                        final video = snapshot.data![index];
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    VideoPlayerScreen(videoId: video.id),
+                              ),
+                            );
+                          },
+                          child: Card(
+                            margin: const EdgeInsets.only(bottom: 16.0),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12.0),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                ClipRRect(
+                                  borderRadius: const BorderRadius.only(
+                                    topLeft: Radius.circular(12),
+                                    topRight: Radius.circular(12),
+                                  ),
+                                  child: Image.network(
+                                    video.thumbnailUrl,
+                                    height:
+                                        180, // Increase height of the image here
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.all(12.0),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withOpacity(
+                                        0.8), // Semi-transparent background
+                                    borderRadius: const BorderRadius.only(
+                                      bottomLeft: Radius.circular(12),
+                                      bottomRight: Radius.circular(12),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    video.title,
+                                    style: const TextStyle(
+                                      fontSize: 18.0,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
                     );
-                  },
-                );
-              },
-            );
-          }
-        },
+                  }
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
