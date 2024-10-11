@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'YouTube Playlists App',
+      title: 'Techverse51 YT App',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
